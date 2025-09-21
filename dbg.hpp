@@ -1,7 +1,7 @@
 #pragma once
+#include <cassert>
 #include <iostream>
 #include <vector>
-#include <cassert>
 
 #ifdef DEBUG
 #define DOUT std::cout
@@ -11,7 +11,7 @@
 
 template <typename T>
 void
-DOUT_array_1d (std::vector<T> v)
+DOUT_array_1d (std::vector<T>& v)
 {
   for (const auto& i : v)
   {
@@ -20,9 +20,20 @@ DOUT_array_1d (std::vector<T> v)
   DOUT << '\n';
 }
 
+template <typename T, typename Func>
+void
+DOUT_array_1d (const std::vector<T>& v, Func f)
+{
+  for (const auto& i : v)
+  {
+    f (i);
+  }
+  DOUT << '\n';
+}
+
 template <typename T>
 void
-DOUT_array_2d (std::vector<std::vector<T> > vec)
+DOUT_array_2d (std::vector<std::vector<T> >& vec)
 {
   for (const auto& a_1d : vec)
   {
@@ -36,7 +47,7 @@ DOUT_array_2d (std::vector<std::vector<T> > vec)
 
 template <typename T>
 void
-DOUT_array_3d (std::vector<std::vector<std::vector<T> > > vec)
+DOUT_array_3d (std::vector<std::vector<std::vector<T> > >& vec)
 {
   for (const auto& a_2d : vec)
   {
@@ -53,18 +64,18 @@ DOUT_array_3d (std::vector<std::vector<std::vector<T> > > vec)
 
 template <typename T>
 void
-print_array_pair (std::vector<T> v)
+DOUT_array_1d_pair (std::vector<T>& v)
 {
   for (auto& i : v)
   {
-    DOUT << i.first << ':' << i.second << '\n';
+    DOUT << i.first << ' ' << i.second << '\n';
   }
 }
 
 // 用來展開 tuple 的 helper function
 template <typename Tuple, size_t... Is>
 void
-print_tuple_impl (const Tuple& t, std::index_sequence<Is...>)
+DOUT_tuple_impl (const Tuple& t, std::index_sequence<Is...>)
 {
   ((DOUT << (Is == 0 ? "" : " ") << std::get<Is> (t)), ...);
   DOUT << '\n';
@@ -73,18 +84,18 @@ print_tuple_impl (const Tuple& t, std::index_sequence<Is...>)
 // 萬能轉發接口：列印任意型別的 tuple
 template <typename... Args>
 void
-print_tuple (const std::tuple<Args...>& t)
+DOUT_tuple (const std::tuple<Args...>& t)
 {
-  print_tuple_impl (t, std::index_sequence_for<Args...>{});
+  DOUT_tuple_impl (t, std::index_sequence_for<Args...>{});
 }
 
 // 印出 vector<tuple<...>> 的函式
 template <typename... Args>
 void
-prinTector_tuples (const std::vector<std::tuple<Args...> >& vec)
+DOUT_array_1d_tuple (const std::vector<std::tuple<Args...> >& vec)
 {
   for (const auto& t : vec)
   {
-    print_tuple (t);
+    DOUT_tuple (t);
   }
 }
