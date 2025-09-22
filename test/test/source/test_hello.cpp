@@ -8,9 +8,11 @@
 //#include <sstream>
 //#include <streambuf>
 
-#include "../../../Big_num.cpp"
+#include "../../../AStar_obstacle_grid.cpp"
+#include "../../../Bn.cpp"
+#include "../../../Dlst.cpp"
 #include "../../../St.cpp"
-#include "../../../DList_v2.cpp"
+#include "../../../alluneed.h"
 
 auto get_cout = [] (auto&& func)
 {
@@ -61,18 +63,43 @@ TEST_CASE ("Dlst")
 {
   Dlst lst;
   CHECK (get_cout ([&] { lst.print (); }).str () == "");
-  lst.ins_pos(-999, Dlst::V(-1));
-  lst.ins_pos(10086, 1);
+  lst.ins_pos (-999, Dlst::V (-1));
+  lst.ins_pos (10086, 1);
   CHECK (get_cout ([&] { lst.print (); }).str () == "-1 1\n");
-  lst.ins_pos(1, 2);
+  lst.ins_pos (1, 2);
   CHECK (get_cout ([&] { lst.print (); }).str () == "-1 2 1\n");
-  lst.ins_pos(2, 3);
+  lst.ins_pos (2, 3);
   CHECK (get_cout ([&] { lst.print (); }).str () == "-1 2 3 1\n");
-  lst.rm_pos(2);
+  lst.rm_pos (2);
   CHECK (get_cout ([&] { lst.print (); }).str () == "-1 2 1\n");
-  lst.rm_pos(10086);
+  lst.rm_pos (10086);
   CHECK (get_cout ([&] { lst.print (); }).str () == "-1 2\n");
-  lst.rm_pos(-999);
+  lst.rm_pos (-999);
   CHECK (get_cout ([&] { lst.print (); }).str () == "2\n");
+}
 
+TEST_CASE ("AStar_obstacle_grid")
+{
+  vector<pii> ans = { { 0, 0 }, { 0, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 },
+                      { 2, 3 }, { 2, 4 }, { 3, 4 }, { 4, 4 } };
+  vvi grid = { { 0, 0, 0, 0, 0 },
+               { 1, 1, 0, 1, 0 },
+               { 0, 0, 0, 0, 0 },
+               { 0, 1, 1, 1, 0 },
+               { 0, 0, 0, 0, 0 } };
+  // 右下到左上
+  AStar astar (grid, { 0, 0 }, { 4, 4 });
+  auto path = astar.search ();
+  if (!path.empty ())
+  {
+    rep (i, SZ (path))
+    {
+      CHECK (path[i] == ans[i]);
+    }
+    cout << "\n";
+  }
+  else
+  {
+    FAIL ("Invaild Path");
+  }
 }

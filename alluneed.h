@@ -8,12 +8,12 @@ using namespace std;
 using ll = long long;
 using pii = pair<int, int>;
 using pll = pair<ll, ll>;
+#define pb push_back
+#define eb emplace_back
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
 #define SZ(a) ((int)(a).size())
 #define vi vector<int>
+#define vvi vector<vector<int>>
 
 #define Str string
-
-// Max_st Sum_st
-
