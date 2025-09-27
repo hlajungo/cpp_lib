@@ -8,19 +8,29 @@
 //#include <sstream>
 //#include <streambuf>
 
-#include "../../../AStar_obstacle_grid.cpp"
+#include <chrono>
+
 #include "../../../Bn.cpp"
 #include "../../../Dlst.cpp"
 #include "../../../St.cpp"
 #include "../../../alluneed.h"
+#include "../../../heuristic/AStar_obstacle_grid.cpp"
 
-auto get_cout = [] (auto&& func)
+auto get_cout = [] (auto func)
 {
   ostringstream oss;
   streambuf* old_buf = cout.rdbuf (oss.rdbuf ());
   func ();
   cout.rdbuf (old_buf);
   return oss;
+};
+
+auto measure_ms = [] (auto func) -> size_t
+{
+  auto start = chrono::high_resolution_clock::now ();
+  func ();
+  auto end = chrono::high_resolution_clock::now ();
+  return chrono::duration_cast<chrono::milliseconds> (end - start).count ();
 };
 
 TEST_CASE ("Bn")
@@ -102,4 +112,30 @@ TEST_CASE ("AStar_obstacle_grid")
   {
     FAIL ("Invaild Path");
   }
+}
+
+#include "../../../prime2.cpp"
+
+/*
+ * @code_source https://gist.github.com/rongjiecomputer/d52f34d27a21b8c9c9e82ca85b806640
+ * 第一次接觸"模板變量"，不像原本的 "concept+type"，稱為 "NTTP, Non-Type Template Parameter"
+ * "模板變量+constexpr" 可以完成複雜 constexpr 計算，貌似是唯一的方式。
+ */
+bool ans_prime[N] = { false };
+TEST_CASE ("Prime")
+{
+  auto duration1 = measure_ms (
+      [&] ()
+      {
+        for (size_t i = 0; i <= N; ++i)
+          ans_prime[i] = is_prime (i);
+      });
+  cerr << "Create ans_prime use = " << duration1 << "\n";
+
+  auto duration2 = measure_ms ([&] () { Prime<N> prime; });
+
+  cerr << "Create Prime use = " << duration2 << "\n";
+
+  for (size_t i = 0; i <= N; ++i)
+    CHECK (prime[i] == ans_prime[i]);
 }

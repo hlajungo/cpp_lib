@@ -15,5 +15,8 @@ using pll = pair<ll, ll>;
 #define SZ(a) ((int)(a).size())
 #define vi vector<int>
 #define vvi vector<vector<int>>
-
-#define Str string
+#ifdef DEBUG
+#define DOUT cout
+#else
+#define DOUT 0 && cout
+#endif

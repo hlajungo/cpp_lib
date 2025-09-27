@@ -1,4 +1,4 @@
-#include "alluneed.h"
+#include "../alluneed.h"
 /*
  * AStar obstacle manhattan grid path searching
  * Support search
